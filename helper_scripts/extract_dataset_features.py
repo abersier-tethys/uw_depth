@@ -7,14 +7,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from os.path import splitext, join, basename, dirname, exists
+from os.path import splitext, join, basename, dirname, exists, normpath
 from os import mkdir
 
 # from datasets.datasets import (
 #     get_flsea_dataset,
 #     get_ycb_dataset,
 # )  # , get_usod10k_dataset
-from data.example_dataset.dataset import get_example_dataset
+from data.pg_dataset.dataset import get_pg_dataset
 # from data.flsea.dataset import get_flsea_dataset
 
 ##########################################
@@ -38,11 +38,11 @@ out_width = 320
 # get img paths
 # dataset = get_flsea_dataset(split="dataset_with_matched_features", shuffle=False)
 # dataset = get_ycb_dataset(split="val", shuffle=False)
-dataset = get_example_dataset(shuffle=False)
+dataset = get_pg_dataset(shuffle=False)
 path_tuples = dataset.path_tuples
 
 # output
-rel_folder = "matched_features"
+rel_folder = "features" # "matched_features" 
 file_ending = "_features.csv"
 
 debug = False
@@ -168,7 +168,8 @@ for path_tuple in path_tuples:
     # paths
     rgb_path = path_tuple[0]
     depth_path = path_tuple[1]
-    out_dir = join(dirname(rgb_path), rel_folder)
+    out_dir = join(rgb_path, "..", "..", rel_folder)
+    out_dir = normpath(out_dir)
     out_filename = splitext(basename(rgb_path))[0] + file_ending
     out_path = join(out_dir, out_filename)
 

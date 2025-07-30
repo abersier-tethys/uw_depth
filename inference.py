@@ -10,7 +10,7 @@ from torchvision.transforms import Resize
 from depth_estimation.model.model import UDFNet
 from depth_estimation.utils.visualization import gray_to_heatmap
 
-from data.example_dataset.dataset import get_example_dataset, get_example_dataset_inference
+from data.pg_dataset.dataset import get_pg_dataset, get_pg_dataset_inference
 
 
 ############################################################
@@ -22,7 +22,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 MODEL_PATH = (
     "data/saved_models/model_e11_udfnet_lr0.0001_bs6_lrd0.9_with_infguidance.pth"
 )
-DATASET = get_example_dataset_inference(priors=True)
+DATASET = get_pg_dataset_inference(priors=True)
 OUT_PATH = "data/out"
 SAVE = True
 
@@ -30,7 +30,7 @@ SAVE = True
 # MODEL_PATH = (
 #     "data/saved_models/model_e24_udfnet_lr0.0001_bs6_lrd0.9_nullpriors.pth"
 # )
-# DATASET = get_example_dataset_inference(priors=False)
+# DATASET = get_pg_dataset_inference(priors=False)
 
 ############################################################
 ############################################################
@@ -59,6 +59,7 @@ def inference():
 
         # inputs
         rgb = data[0].to(DEVICE)  # RGB image
+        # depth = data[1].to(DEVICE) # DEPTH image
 
         # using priors from files or not
         if len(data) > 1:
@@ -78,6 +79,10 @@ def inference():
         # heatmap for visuals
         heatmap = gray_to_heatmap(prediction).to(DEVICE)  # for visualization
 
+        prior_channel = prior[:, 0, :, :].unsqueeze(1)
+        heatmap_priors = gray_to_heatmap(prior_channel).to(DEVICE)  # for visualization
+        # print(f"PRIOR SHAPE: {prior_channel.shape}")
+
         # save outputs
         if SAVE:
             # resize = Resize(heatmap.size()[-2:])
@@ -89,11 +94,13 @@ def inference():
                 # out_prediction = join(OUT_PATH, f"{index}_depth.png")
                 out_heatmap = join(OUT_PATH, f"{index}".zfill(4) + "_heatmap.png")
                 out_rgb_heatmap = join(OUT_PATH, f"{index}".zfill(4) + "_rgb_heatmap.png")
+                out_rgb_heatmap_priors = join(OUT_PATH, f"{index}".zfill(4) + "_rgb_heatmap_priors.png")
 
                 # save_image(rgb[i], out_rgb)
                 # save_image(prediction[i], out_prediction)
                 save_image(heatmap[i], out_heatmap)
                 save_image([rgb[i], resize(heatmap[i])], out_rgb_heatmap)
+                save_image([rgb[i], resize(heatmap_priors[i])], out_rgb_heatmap_priors)
 
         if batch_id % 10 == 0:
             print(f"{batch_id}/{n_batches}, {1.0/time_per_img} FPS")

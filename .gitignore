@@ -3,3 +3,13 @@ dist
 __pycache__
 *.egg-info
 venv
+data/pg_dataset/colmap_undistorted_output/*
+data/pg_dataset/depth/*
+data/pg_dataset/features/*
+data/pg_dataset/rgb/*
+data/pg_dataset/dataset.csv
+
+!data/pg_dataset/colmap_undistorted_output/.gitkeep
+!data/pg_dataset/depth/.gitkeep
+!data/pg_dataset/features/.gitkeep
+!data/pg_dataset/rgb/.gitkeep

@@ -75,7 +75,7 @@ def get_bin_centers_img(bin_edges, target, mask, device="cpu"):
 
 
 def gray_to_heatmap(gray, colormap="inferno_r", normalize=True, device="cpu"):
-    """Takes torch tensor input of shape [Nx1HxW], returns heatmap tensor of shape [Nx3xHxW].\\
+    """Takes torch tensor input of shape [Nx1xHxW], returns heatmap tensor of shape [Nx3xHxW].\\
     colormap 'inferno_r': [0,1] --> [bright, dark], e.g. for depths\\
     colormap 'inferno': [0,1] --> [dark, bright], e.g. for probabilities"""
 
